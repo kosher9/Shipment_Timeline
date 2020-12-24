@@ -21,7 +21,7 @@ class ShipmentAdapter(private val mShipments: List<Shipment>) :
         format.timeZone = TimeZone.getTimeZone("America")
     }
 
-    class ViewHolder(listItem: View): RecyclerView.ViewHolder(listItem) {
+    class ViewHolder(listItem: View) : RecyclerView.ViewHolder(listItem) {
         val dateTextView: TextView = itemView.findViewById(R.id.date_txt_view)
         val hourTextView: TextView = itemView.findViewById(R.id.hour_txt_view)
         val deliverStateTextView: TextView = itemView.findViewById(R.id.deliver_state_txt_view)
@@ -35,7 +35,7 @@ class ShipmentAdapter(private val mShipments: List<Shipment>) :
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
         val context = parent.context
         val inflater = LayoutInflater.from(context)
-        val shipmentView = inflater.inflate(R.layout.shipment_item, parent,false)
+        val shipmentView = inflater.inflate(R.layout.shipment_item, parent, false)
         return ViewHolder(shipmentView)
     }
 
@@ -54,21 +54,21 @@ class ShipmentAdapter(private val mShipments: List<Shipment>) :
         lineView.setBackgroundResource(R.drawable.rectangle_blue)
         coloredCircle.setBackgroundResource(R.drawable.circle_blue)
 
-        if (shipment.shipmentIsDelayed){
+        if (shipment.shipmentIsDelayed) {
             lineView.setBackgroundResource(R.drawable.rectangle_orange)
             coloredCircle.setBackgroundResource(R.drawable.circle_orange)
         }
 
         // Permet de colorer la ligne actuelle en sachant que l'item suivant est delayed
-        if (position < mShipments.size-1){
-            val s = mShipments[position+1]
-            if (s.shipmentIsDelayed){
+        if (position < mShipments.size - 1) {
+            val s = mShipments[position + 1]
+            if (s.shipmentIsDelayed) {
                 lineView.setBackgroundResource(R.drawable.rectangle_orange)
             }
         }
 
         // Rend invisible la ligne du dernier item
-        if (position == mShipments.size-1){
+        if (position == mShipments.size - 1) {
             lineView.visibility = View.GONE
         }
 
@@ -93,25 +93,31 @@ class ShipmentAdapter(private val mShipments: List<Shipment>) :
             val dateFormat = SimpleDateFormat("MMM dd hh:mmaa", Locale.US).format(mDate!!)
             date.text = dateFormat.subSequence(0, 6)
             hour.text = dateFormat.subSequence(7, 14).toString().toLowerCase(Locale.ROOT)
-        } catch (e: ParseException){
+        } catch (e: ParseException) {
             Log.i("ShipmentAdapter", "${e.message}")
         }
 
-        if (date.text != dateSaver){
+        if (date.text != dateSaver) {
             dateSaver = date.text.toString()
             date.visibility = View.VISIBLE
-        } else if (dateSaver == date.text){
+        } else if (dateSaver == date.text) {
             date.visibility = View.GONE
         }
 
-        deliverState.text = shipment.eventPosition?.status?.toLowerCase(Locale.ROOT)?.capitalize(Locale.ROOT)
+        deliverState.text =
+            shipment.eventPosition?.status?.toLowerCase(Locale.ROOT)?.capitalize(Locale.ROOT)
         val com = shipment.eventPosition?.comments
-        if ( com == "null"){
+        if (com == "null") {
             comment.visibility = View.GONE
-        } else{
+        } else {
             comment.text = com?.toLowerCase(Locale.ROOT)?.capitalize(Locale.ROOT)
         }
-        city.text = shipment.eventPosition?.city?.toLowerCase(Locale.ROOT)?.capitalize(Locale.ROOT)
+        if (shipment.eventPosition?.state != null){
+            val c = "${
+                shipment.eventPosition.city!!.toLowerCase(Locale.ROOT).capitalize(Locale.ROOT)
+            }, ${shipment.eventPosition.state}"
+            city.text = c
+        }
     }
 
     override fun getItemCount() = mShipments.size
